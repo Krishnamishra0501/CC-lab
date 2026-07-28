@@ -1,25 +1,37 @@
 %{
 #include <stdio.h>
 
-int comments = 0, keywords = 0, identifiers = 0;
-int words = 0, lines = 0, spaces = 0;
+int comments = 0;
+int keywords = 0;
+int identifiers = 0;
+int words = 0;
+int lines = 0;
+int spaces = 0;
 %}
 
+%x COMMENT
+
 %%
-"/*"(.|\n)*?"*/"              { comments++; }
-"//".*                        { comments++; }
 
-[ \t]+                        { spaces += yyleng; }
-\n                            { lines++; }
+"/*"                    { comments++; BEGIN(COMMENT); }
+<COMMENT>"*/"           { BEGIN(INITIAL); }
+<COMMENT>\n             { lines++; }
+<COMMENT>.              { }
 
-"int"|"char"|"float"|"double"|"if"|"else"|"while"|"for"|"return"
-                              { keywords++; words++; }
+"//".*                  { comments++; }
 
-[a-zA-Z_][a-zA-Z0-9_]*        { identifiers++; words++; }
+[ \t]+                  { spaces += yyleng; }
 
-[0-9]+                        { words++; }
+\n                      { lines++; }
 
-.                             { }
+"int"|"char"|"float"|"double"|"if"|"else"|"while"|"for"|"return" { keywords++; words++; }
+
+[a-zA-Z_][a-zA-Z0-9_]*  { identifiers++; words++; }
+
+[0-9]+                  { words++; }
+
+.                       { }
+
 %%
 
 int main()
