@@ -5,9 +5,10 @@ int count = 0;
 
 %%
 
-[Aa][A-Za-z0-9_]*    { count++; }
-[ \t\n]+             ;
-.                    ;
+.*COM[ \t]*\n    { count++; }
+.*COM[ \t]*      { count++; }
+[^\n]*\n         ;
+.                ;
 
 %%
 
@@ -19,6 +20,6 @@ int yywrap(void)
 int main()
 {
     yylex();
-    printf("Words starting with A or a: %d\n", count);
+    printf("Lines ending with COM: %d\n", count);
     return 0;
 }
