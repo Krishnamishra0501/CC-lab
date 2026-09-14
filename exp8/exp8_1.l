@@ -1,17 +1,41 @@
 %{
-#include<stdio.h>
-#include"y.tab.h"
-}%
+#include <stdio.h>
+#include "y.tab.h"
+
+int stringtoNumber(char str[])
+{
+    int num = 0;
+    int i = 0;
+
+    while (str[i] != '\0')
+    {
+        num = num * 10 + (str[i] - '0');
+        i++;
+    }
+
+    return num;
+}
+%}
 
 %%
-[0-9]+  	{yylval= atoi(yytext); return num;}
-[+*] 		{return yytext[0];}
-//use multiple operators and function for conv string to int
-[ \t]  		{ ;}
-. 		{printf("invalid %s",yytext);}
+
+"infix"     { return INFIX; }
+"prefix"    { return PREFIX; }
+"postfix"   { return POSTFIX; }
+
+[0-9]+      { yylval = stringtoNumber(yytext); return NUMBER; }
+
+[+*/-]      { return yytext[0]; }
+
+[ \t]       ;
+
+\n          { return '\n'; }
+
+.           ;
+
 %%
 
-int yywrap(){
-	return 1;
-	}
-
+int yywrap()
+{
+    return 1;
+}
